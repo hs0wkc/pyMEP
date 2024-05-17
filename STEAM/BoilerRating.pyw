@@ -15,7 +15,7 @@ class MainWindow(Ctk.CTk):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.title('Boiler Ratings')
-		self.geometry("370x220") 
+		self.geometry("380x220") 
 		self.resizable(False, False)
 		
 		self.tbEquivalentOutputKG = tk.DoubleVar()
@@ -25,7 +25,7 @@ class MainWindow(Ctk.CTk):
 		self.rbtnRating = tk.IntVar()
 		self.tbEvaporationRate = tk.DoubleVar()
 		self.tbEvaporationRate.set(2320.58)
-		
+
 		Ctk.CTkLabel(self, text='Operating Pressure').grid(column=0, row=0, sticky=tk.E, padx=5, pady=(15,3))
 		self.cmbPressure = Ctk.CTkComboBox(self, width=80, justify='right')
 		self.cmbPressure.grid(column=1, row=0, sticky=tk.W, padx=5, pady=(15,3))
@@ -47,7 +47,7 @@ class MainWindow(Ctk.CTk):
 		Ctk.CTkEntry(self, textvariable=self.tbEquivalentOutputKW, width=80, justify='right').grid(column=1, row=3, sticky=tk.W, padx=5, pady=3)
 		Ctk.CTkRadioButton(self, text='kW Rating', value=1, variable=self.rbtnRating, command=self.EvaporationRate).grid(column=2, row=3, sticky=tk.W, padx=5, pady=3)
 		
-		tk.Frame(self, bd=10, relief='sunken', height=1, bg="orange").grid(column=0, columnspan=4, row=4, sticky='ew', padx=10, pady=10)
+		tk.Frame(self, bd=10, relief='sunken', height=1, bg="orange").grid(column=0, columnspan=4, row=4, sticky='ew', padx=10, pady=(10,20))
 		
 		Ctk.CTkLabel(self, text='Boiler Evaporation Rate').grid(column=0, row=5, sticky=tk.E, padx=5, pady=3)
 		Ctk.CTkEntry(self, textvariable=self.tbEvaporationRate, width=80, justify='right', state=tk.DISABLED).grid(column=1, row=5, sticky=tk.W, padx=5, pady=3)
