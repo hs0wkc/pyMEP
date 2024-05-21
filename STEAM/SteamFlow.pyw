@@ -48,6 +48,7 @@ class SteamFlow(Ctk.CTk):
         Vg = float(steam_pressure[self.cmbPressure.get()])
         SteamFlowrate = (V * 3600 * pi * (D * D)) / (Vg * 4)
         self.tbFlow.set(round(SteamFlowrate, 2))
+        # print(V,D, Vg, SteamFlowrate, self.cmbPressure.get())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,7 +106,7 @@ class SteamFlow(Ctk.CTk):
         canvas.bind("<Button-1>", lambda e: webbrowser.open("https://www.spiraxsarco.com/learn-about-steam/steam-distribution/pipes-and-pipe-sizing?sc_lang=en-GB"))
 
 if __name__ == "__main__":
-    scriptpath = os.path.dirname(os.path.abspath(__file__))
+    # scriptpath = os.path.dirname(os.path.abspath(__file__))
     NPS = ('15 mm', '20 mm', '25 mm', '32 mm', '40 mm', '50 mm', '65 mm', '80 mm', '100 mm', '125 mm', '150 mm', '200 mm', '250 mm', '300 mm')
     CSV_PIPETABLE = os.path.normpath(os.path.join(ExtensionPath(), 'PipeThickness.csv'))
     CSV_STEAMTABLE = os.path.normpath(os.path.join(ExtensionPath(), 'SteamTable.csv'))
