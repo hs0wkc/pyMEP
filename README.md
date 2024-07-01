@@ -6,6 +6,6 @@ Tools :\
 	CustomTkinter https://github.com/TomSchimansky/CustomTkinter
 
 Status :\
-	Move to ironPython + WPF repository ipyMEP
+	Move to development on ironPython + WPF, repository ipyMEP
 
 L.Euttana
