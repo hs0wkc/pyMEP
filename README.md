@@ -8,6 +8,6 @@ Tools :\
 Status :\
 	Move to development on ironPython + WPF, repository ipyMEP\
 
-![Alt text](images/screenshot.png)\
+![Alt text](screenshot.png)
 
 L.Euttana
