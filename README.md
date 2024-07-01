@@ -6,6 +6,6 @@ Tools :
 	CustomTkinter https://github.com/TomSchimansky/CustomTkinter
 
 Status :
-	MOve to ireonPython + WPF
+	Move to ireonPython + WPF
 
 L.Euttana
