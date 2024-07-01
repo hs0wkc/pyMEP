@@ -7,7 +7,9 @@ Tools :\
 
 Status :\
 	Move to development on ironPython + WPF, repository ipyMEP\
-
+ \
+ L.Euttana
+ \
+ \
+ \
 ![Alt text](screenshot.png)
-
-L.Euttana
