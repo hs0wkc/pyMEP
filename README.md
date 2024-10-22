@@ -41,4 +41,4 @@ plot air conditioning processes on a psychrometric chart.
 
 L.Euttana
 
-![Alt text](images/screenshot.jpg)
+![](https://github.com/hs0wkc/pyMEP/raw/master/images/screenshot.jpg)

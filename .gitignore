@@ -3,5 +3,7 @@
 build/*
 *.egg-info/
 make.cmd
+install.cmd
+uninstall.cmd
 setup.py
 
