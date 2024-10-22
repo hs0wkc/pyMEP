@@ -1,0 +1,7 @@
+# .gitignore
+.eggs/*
+build/*
+*.egg-info/
+make.cmd
+setup.py
+
