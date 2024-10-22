@@ -3,11 +3,11 @@ EXAMPLE 2
 ---------
 Calculate  the cooling load from people for office.
 """
-from pymep import Quantity
-from pymep.hvac.coolingload import RTS
-from pymep.hvac.internal_heat_gains import PeopleHeatGain
-from pymep.hvac.people import *
-from pymep.charts.chart_2D import LineChart
+from pyMEP import Quantity
+from pyMEP.hvac.coolingload import RTS
+from pyMEP.hvac.internal_heat_gains import PeopleHeatGain
+from pyMEP.hvac.people import *
+from pyMEP.charts.chart_2D import LineChart
 
 Q_ = Quantity
 

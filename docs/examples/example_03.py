@@ -3,11 +3,11 @@ EXAMPLE 3
 ---------
 Calculate the cooling load contribution from the wall section facing 60° west of south.
 """
-from pymep import Quantity
-from pymep.hvac.climatic import WeatherData, ReferenceDates
-from pymep.hvac.coolingload import RTS
-from pymep.hvac.external_heat_gains import *
-from pymep.charts.chart_2D import LineChart
+from pyMEP import Quantity
+from pyMEP.hvac.climatic import WeatherData, ReferenceDates
+from pyMEP.hvac.coolingload import RTS
+from pyMEP.hvac.external_heat_gains import *
+from pyMEP.charts.chart_2D import LineChart
 
 Q_ = Quantity
 

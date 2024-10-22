@@ -1,12 +1,12 @@
 ﻿from psychrolib import SetUnitSystem, SI, CalcPsychrometricsFromTWetBulb, CalcPsychrometricsFromRelHum
-from pymep import Quantity
-from pymep.hvac.climatic import WeatherData, ReferenceDates
-from pymep.hvac.internal_heat_gains import *
-from pymep.hvac.external_heat_gains import *
-from pymep.hvac.coolingload import *
-from pymep.hvac.lighting import *
-from pymep.hvac.people import *
-from pymep.hvac.equipment import *
+from pyMEP import Quantity
+from pyMEP.hvac.climatic import WeatherData, ReferenceDates
+from pyMEP.hvac.internal_heat_gains import *
+from pyMEP.hvac.external_heat_gains import *
+from pyMEP.hvac.coolingload import *
+from pyMEP.hvac.lighting import *
+from pyMEP.hvac.people import *
+from pyMEP.hvac.equipment import *
 from _resource import *
 
 Q_ = Quantity

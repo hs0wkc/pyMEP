@@ -3,11 +3,11 @@ EXAMPLE 1
 ---------
 Calculate  the cooling load from lighting for office.
 """
-from pymep import Quantity
-from pymep.hvac.coolingload import RTS
-from pymep.hvac.internal_heat_gains import LightingHeatGain
-from pymep.hvac.lighting import *
-from pymep.charts.chart_2D import LineChart
+from pyMEP import Quantity
+from pyMEP.hvac.coolingload import RTS
+from pyMEP.hvac.internal_heat_gains import LightingHeatGain
+from pyMEP.hvac.lighting import *
+from pyMEP.charts.chart_2D import LineChart
 
 Q_ = Quantity
 
