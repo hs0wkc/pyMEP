@@ -17,6 +17,10 @@ At this moment the following subpackages are part of `pyMEP`:
 A package for doing cooling load calculations of a building, based upon ASHRAE's
 Radiant-Times-Series (RTS) method.
 
+**insulation**
+- Calculate insulation thickness by dew point for protect condensate on pipe ot storage tank.
+- Calculate approximate surface temperature of insulation that cover hot pipe or storage tank.
+
 Besides the aforementioned application-oriented packages, `pyMEP` also includes a
 number of more basic subpackages which are used throughout the modules of
 `pyMEP`:
