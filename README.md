@@ -10,7 +10,7 @@ A Python library for MEP engineering:
 At this moment the following subpackages are part of `pyMEP`:
 
 **coolingload**
-A package for doing cooling load calculations of a building, based upon ASHRAE's
+- A package for doing cooling load calculations of a building, based upon ASHRAE's
 Fundamentals 2021 Radiant-Times-Series (RTS) method.
 
 **insulation**
