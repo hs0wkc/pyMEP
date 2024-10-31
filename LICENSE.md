@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (c) 2023 Tom Christiaens
+Copyright (c) 2023 L.Euttana
+hs0wkc@hotmail.com, hs0wkc@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
