@@ -1,10 +1,6 @@
 # pyMEP Package
 
 A Python library for MEP engineering:
-- coolingload : based upon ASHRAE's Fundamentals 2021 Radiant-Times-Series (RTS) method.
-- ...
-- ...
-
 
 > [!NOTE]
 > Example scripts and notebooks can be found under `docs/examples`. More examples
@@ -15,7 +11,7 @@ At this moment the following subpackages are part of `pyMEP`:
 
 **coolingload**
 A package for doing cooling load calculations of a building, based upon ASHRAE's
-Radiant-Times-Series (RTS) method.
+Fundamentals 2021 Radiant-Times-Series (RTS) method.
 
 **insulation**
 - Calculate insulation thickness by dew point for protect condensate on pipe ot storage tank.
