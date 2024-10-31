@@ -1,118 +1,167 @@
 ﻿import pandas as pd
+import numpy as np
+from scipy.interpolate import interp1d
 from dataclasses import dataclass
+from collections import namedtuple
 from math import floor
 from iapws import IAPWS97
+from pyMEP import Quantity
 
-def _upper_bound(x, list_data):
-    if  x > list_data[-1]:
-        return
-    for i, y in enumerate(list_data):
-        if x <= y:
-            return list_data[i], i
-def _lower_bound(x, list_data):
-    if  x < list_data[0]:
-        return
-    for i, y in enumerate(reversed(list_data)):
-        if x >= y:
-            return list_data[-i-1], list_data.index(y)
+Q_ = Quantity
 
 @dataclass(frozen=True)
-class WATER():
+class INSULATION:
+	_insulation = namedtuple('id', ['id','Density', 'MeanTemperature', 'ThermalConductivity', 'Emissivity', 'Description'])
+	_property_table = {
+		'FPO-G'		:_insulation('FPO-G'	,48, None, 0.032, 0.04, 'Glasswool with aluminum foil for duct liner'),
+		'DLN-G'		:_insulation('DLN-G'	,48, None, 0.038,  0.9, 'Glasswool with black neoprene coating for duct liner'),
+		'PCI'		:_insulation('PCI'		,64,		[   10,   24,   38,   66,   93,  121,  149,  177,  204,  232,  260], 
+														[0.030,0.032,0.035,0.039,0.043,0.046,0.055,0.058,0.063,0.069,0.078],
+														0.95, 'Glasswool for Pipe insulation'),
+		'PCIF'		:_insulation('PCIF'		,64,		[   10,   24,   38,   66,   93,  121,  149,  177,  204,  232,  260], 
+														[0.030,0.032,0.035,0.039,0.043,0.046,0.055,0.058,0.063,0.069,0.078],
+														0.04, 'Glasswool with aluminum foil for Pipe insulation'),
+		'HTIF16'	:_insulation('HTIF16'	,16,		[   10,   24,   38,   99,  149,  204,  260,  316], 
+														[0.035,0.038,0.041,0.052,0.078,0.108,0.149,0.203],
+														0.04, 'Glasswool with aluminum foil for High Temperature'),
+		'HTIF26'	:_insulation('HTIF16'	,26,		[   10,   24,   38,   99,  149,  204,  260,  316], 
+														[0.033,0.035,0.038,0.049,0.067,0.089,0.119,0.160],
+														0.04, 'Glasswool with aluminum foil for High Temperature'),
+		'HTIF32'	:_insulation('HTIF32'	,26,		[   10,   24,   38,   99,  149,  204,  260,  316], 
+														[0.031,0.033,0.037,0.048,0.060,0.075,0.103,0.135],
+														0.04, 'Glasswool with aluminum foil for High Temperature'),
+		'HTIF38'	:_insulation('HTIF38'	,26,		[   10,   24,   38,   99,  149,  204,  260,  316], 
+														[0.030,0.032,0.035,0.043,0.055,0.063,0.089,0.114],
+														0.04, 'Glasswool with aluminum foil for High Temperature'),
+		'MicroFiber':_insulation('MicroFiber', 64,		[   10,   24,   38,   66,   93,  121,  149,  177,  204,  232,  260], 
+														[0.030,0.032,0.033,0.038,0.043,0.046,0.051,0.056,0.062,0.069,0.075],
+														0.04, 'Glasswool with aluminum foil for Pipe insulation'),
+		'ProRox'	:_insulation('ProRox'	,120,		[   50,  100,  150,  200,  250,  300,  350], 
+														[0.037,0.042,0.048,0.055,0.063,0.072,0.083],
+														0.04, 'Rockwool with aluminum cladding for High Temperature'),
+		'Aeroflex'	:_insulation('Aeroflex'	,50,		[   -20,      0,    24,    32,    40], 
+														[0.0310, 0.0330,0.0356,0.0365,0.0374],
+														0.9, 'EPDM closed cell'),
+		'PU'		:_insulation('PU'		,35, None, 0.023, 0.4, 'Polyurethane Foam'),
+	}
+	@classmethod
+	def InsulationList(cls):
+		return list(cls._property_table.keys())	
 
 	@classmethod
-	def hf(cls, temperature:float = 1) -> float|None:
-		# Specific Enthalpy of Water (hf)
-		return IAPWS97(T=temperature + 273.15, x=0).h
+	def ThermalConductivity(cls, ins:str, temp:float|None=None)->float:
+		insulation = cls._property_table[ins]
+		if insulation.MeanTemperature is None:
+			return insulation.ThermalConductivity
+		else:
+			x = np.array(insulation.MeanTemperature)
+			y = np.array(insulation.ThermalConductivity)
+			fx = interp1d(x, y)
+			if temp<= min(insulation.MeanTemperature):
+				return insulation.ThermalConductivity[0]
+			elif temp >= max(insulation.MeanTemperature):
+				return insulation.ThermalConductivity[-1]
+			else:
+				return fx(temp)
 
 @dataclass(frozen=True)
-class STEAM():
+class WATER:
+	
+	@classmethod
+	def hf(cls, temperature:Quantity) -> float|None:
+		# Specific Enthalpy of Water (hf)
+		return IAPWS97(T=temperature.to('degK').m, x=0).h
+
+@dataclass(frozen=True)
+class STEAM:
 	# https://iapws.readthedocs.io/en/latest/iapws.iapws97.html#iapws.iapws97.IAPWS97
 	# x : x (float) – Vapor quality
 	# Parameter : pressure (bar.a)
 	@classmethod
-	def SaturationTemperature(cls, pressure:float = 1) -> float|None:
+	def SaturationTemperature(cls, pressure:Quantity) -> float|None:
 		# Specific Enthalpy of Evaporation (hfg)
-		return IAPWS97(P=pressure/10, x=0).T -273.15
+		return Q_(IAPWS97(P=pressure.to('MPa').m, x=0).T,'degK').to('degC').m
 
 	@classmethod
-	def hf(cls, pressure:float = 1) -> float|None:
+	def hf(cls, pressure:Quantity) -> float|None:
 		# Specific Enthalpy of Water (hf)
-		return IAPWS97(P=pressure/10, x=0).h
+		return IAPWS97(P=pressure.to('MPa').m, x=0).h
 
 	@classmethod
-	def hfg(cls, pressure:float = 1) -> float|None:
+	def hfg(cls, pressure:Quantity) -> float|None:
 		# Specific Enthalpy of Evaporation (hfg)
 		return cls.hg(pressure) - cls.hf(pressure)
 
 	@classmethod
-	def hg(cls, pressure:float = 1) -> float|None:
+	def hg(cls, pressure:Quantity) -> float|None:
 		# Specific Enthalpy of Steam (hg)
-		return IAPWS97(P=pressure/10, x=1).h
+		return IAPWS97(P=pressure.to('MPa').m, x=1).h
 
 	@classmethod
-	def Density(cls, pressure:float = 1) -> float|None:
+	def Density(cls, pressure:Quantity) -> float|None:
 		# Specific Entropy of Water (sf)
-		return IAPWS97(P=pressure/10, x=1).rho
+		return IAPWS97(P=pressure.to('MPa').m, x=1).rho
 
 	@classmethod
-	def Vg(cls, pressure:float = 1) -> float|None:
+	def Vg(cls, pressure:Quantity) -> float|None:
 		# Specific Volume of Steam (vg)		
-		return IAPWS97(P=pressure/10, x=1).v
+		return IAPWS97(P=pressure.to('MPa').m, x=1).v
 
 	@classmethod
-	def Sf(cls, pressure:float = 1) -> float|None:
+	def Sf(cls, pressure:Quantity) -> float|None:
 		# Specific Entropy of Water (sf)
-		return IAPWS97(P=pressure/10, x=0).s
+		return IAPWS97(P=pressure.to('MPa').m, x=0).s
 
 	@classmethod
-	def Sfg(cls, pressure:float = 1) -> float|None:
+	def Sfg(cls, pressure:Quantity) -> float|None:
 		# Specific Entropy of Evaporation (sfg)
 		return cls.Sg(pressure) - cls.Sf(pressure)
 
 	@classmethod
-	def Sg(cls, pressure:float = 1) -> float|None:
+	def Sg(cls, pressure:Quantity) -> float|None:
 		# Specific Entropy of Steam (sg)
-		return IAPWS97(P=pressure/10, x=1).s
+		return IAPWS97(P=pressure.to('MPa').m, x=1).s
 
 	@classmethod
-	def Cv(cls, pressure:float = 1) -> float|None:
+	def Cv(cls, pressure:Quantity) -> float|None:
 		# Specific Heat of Steam at Constant Volume (cv)
-		return IAPWS97(P=pressure/10, x=1).cv
+		return IAPWS97(P=pressure.to('MPa').m, x=1).cv
 
 	@classmethod
-	def Cp(cls, pressure:float = 1) -> float|None:
+	def Cp(cls, pressure:Quantity) -> float|None:
 		# Specific Heat of Steam at Constant Pressure (cp)
-		return IAPWS97(P=pressure/10, x=1).cp
+		return IAPWS97(P=pressure.to('MPa').m, x=1).cp
 
 	@classmethod
-	def DynamicViscosity(cls, pressure:float = 1) -> float|None:
+	def DynamicViscosity(cls, pressure:Quantity) -> float|None:
 		# Dynamic viscosity, [Pa·s]
-		return IAPWS97(P=pressure/10, x=1).mu
+		return IAPWS97(P=pressure.to('MPa').m, x=1).mu
 
 @dataclass(frozen=True)
-class FUEL():
-	property_table = {'LPG':			[50220,'kj/kg'],
-					  'Fuel Oil Gr.A':	[41274,'kj/Litre'], 
-					  'Fuel Oil Gr.C':	[38174,'kj/Litre'],
-					  'Bituminous Gr.A':[32564,'kj/kg'],
-					  'Bituminous Gr.C':[24423,'kj/kg'],
-					  'Wood Pellets':	[17000,'kj/kg']}
+class FUEL:
+	_property_table = {
+		'LPG':				(50220,'kj/kg'),
+		'Fuel Oil Gr.A':	(41274,'kj/Litre'),
+		'Fuel Oil Gr.C':	(38174,'kj/Litre'),
+		'Bituminous Gr.A':	(32564,'kj/kg'),
+		'Bituminous Gr.C':	(24423,'kj/kg'),
+		'Wood Pellets':		(17000,'kj/kg')
+	}
 
 	@classmethod
 	def FuelList(cls):
-		fuel_list = list(cls.property_table.keys())
-		return fuel_list
+		return list(cls._property_table.keys())
 
 	@classmethod
 	def FuelGCV(cls, fuel):
-		return cls.property_table[fuel][0]
+		return cls._property_table[fuel][0]
 
 	@classmethod
 	def FuelUnit(cls, fuel):
-		return cls.property_table[fuel][1]
+		return cls._property_table[fuel][1]
 
 @dataclass(frozen=True)
-class LPG():
+class LPG:
 
 	@classmethod
 	def GetPipeSize(cls, df: pd.DataFrame, length:float, btu:float) -> str:
@@ -251,7 +300,7 @@ class LPG():
 		columns=['Length','8 mm','10 mm','15 mm','18 mm','20 mm','25 mm','32 mm','40 mm','50 mm'])
 
 @dataclass(frozen=True)
-class PIPE():
+class PIPE:
 
 	@classmethod
 	def GetPipeSize(cls, d:float, sch:str='40') -> str:
@@ -304,3 +353,16 @@ class PIPE():
 				['1200 mm',1219.2, None, None, None, None, None,  9.53, None,  None,  None,  12.7,  None,  None,  None,  None,  None,  None,  None,  None,  None,  None,  None]],
 		columns=['nps'	  ,'OD'	 , '5S', '10S', '10', '20', '30','STD','40S',  '40',   '60', 'XS', '80S',   '80','100', '120', '140', '160', 'XXS', 'DXS', 'DXXS','TXS','TXXS'])
 	# PipeThickness_df.set_index('nps', inplace=True)
+
+def _upper_bound(x, list_data):
+	if  x > list_data[-1]:
+		return
+	for i, y in enumerate(list_data):
+		if x <= y:
+			return list_data[i], i
+def _lower_bound(x, list_data):
+	if  x < list_data[0]:
+		return
+	for i, y in enumerate(reversed(list_data)):
+		if x >= y:
+			return list_data[-i-1], list_data.index(y)

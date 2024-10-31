@@ -3,10 +3,11 @@ import numpy as np
 from abc import ABC, abstractmethod
 from typing import Callable
 from .. import Quantity
+from pyMEP.hvac.coolingload import Setting
 
 Q_ = Quantity
 
-# ASHRAE Fundamentals 2021, Chapter 18, §18.5
+# ASHRAE Fundamentals 2021, Chapter 18, §18.5 
 # Table 2 Lighting Power Densities Using Space-by-Space Method
 lpd_df = pd.DataFrame([
     ['Training Room'            ,'All'                                  , 13.4],
@@ -32,7 +33,7 @@ def LightingPowerDensities(space_type:str, category:str|None = None) -> float:
     # print(lpd_df[lpd_df['Space Types'].str.match('Office') & lpd_df.Category.str.match('Enclosed')])
     # print(lpd_df[lpd_df['Space Types'].str.match('Office') & lpd_df.Category.str.match('Enclosed')]['LPD, W/m²'])
     # Column Name have space must be used ['__'] and not used '(' or ')'
-    if category is not None:
+    if category is not None:        
         return lpd_df[lpd_df['Space Types'].str.match(space_type) & lpd_df.Category.str.match(category)]['LPD, W/m²'].values[0]
     else:
         return lpd_df[lpd_df['Space Types'].str.match(space_type)]['LPD, W/m²'].values[0]
@@ -44,8 +45,8 @@ class Lighting(ABC):
         self.schedule: Callable[[float], float] | None = None
         self.F_space: Quantity
         self.F_rad: Quantity
-        self.Q_dot_light: Quantity
-
+        self.Q_dot_light: Quantity  
+    
     @classmethod
     @abstractmethod
     def create(cls, *args, **kwargs) -> 'Lighting':
@@ -71,8 +72,8 @@ class LightingFixture(Lighting):
                 schedule: Callable[[float], float],
                 P_lamp: Quantity = Q_(0.0, 'W'),
                 F_allowance: Quantity= Q_(0.0, '%'),
-                F_rad: Quantity = Q_(0.58,'').to('%'),
-                F_use : Quantity = Q_(1.0,'').to('%')
+                F_rad: Quantity = Q_(Setting.Lighting_F_rad,'').to('%'),
+                F_use : Quantity = Q_(Setting.Lighting_F_use,'').to('%')
     ) -> 'LightingFixture':
         """Creates a `LightingFixture` object.
         (see ASHRAE Fundamentals 20121, Chapter 18, 2.2 Lighting).
@@ -112,7 +113,7 @@ class LightingFixture(Lighting):
         fixture.P_lamp = P_lamp
         fixture.F_allowance = F_allowance
         fixture.F_use = F_use
-        fixture.F_rad = F_rad
+        fixture.F_rad = F_rad       
         return fixture
 
     def calculate_heat_gain(self, t_sol_sec: float):
@@ -127,14 +128,14 @@ class SpaceLighting(Lighting):
         super().__init__()
         self.power_density: Quantity
         self.A_floor: Quantity
-
+        
     @classmethod
     def create( cls, ID: str,
                 schedule: Callable[[float], float],
                 power_density: Quantity = Q_(0.0,'W / m ** 2'),
                 floor_area: Quantity = Q_(0.0, 'm ** 2'),
-                F_rad: Quantity = Q_(0.58,'').to('%'),
-                F_space: Quantity = Q_(0.69,'').to('%')
+                F_rad: Quantity = Q_(Setting.Lighting_F_rad,'').to('%'),
+                F_space: Quantity = Q_(Setting.Lighting_F_space,'').to('%')
     ) -> 'SpaceLighting':
         """Creates a `SpaceLighting` object.
         (see c).
@@ -166,7 +167,7 @@ class SpaceLighting(Lighting):
         lighting.schedule = schedule
         lighting.power_density = power_density
         lighting.A_floor = floor_area
-        lighting.F_space = F_space
+        lighting.F_space = F_space        
         lighting.F_rad = F_rad
         return lighting
 
