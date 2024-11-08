@@ -3,7 +3,6 @@ import numpy as np
 from scipy.interpolate import interp1d
 from dataclasses import dataclass
 from collections import namedtuple
-from math import floor
 from iapws import IAPWS97
 from pyMEP import Quantity
 
@@ -305,7 +304,7 @@ class PIPE:
 	@classmethod
 	def GetPipeSize(cls, d:float, sch:str='40') -> str:
 		for p in cls.NPS:
-			if ((cls.OutsideDiameter(p) - 2*cls.Thickness(p, sch))/1000) >= floor(d * 1000)/1000.0:
+			if ((cls.OutsideDiameter(p) - 2*cls.Thickness(p, sch))/1000) >= np.floor(d * 1000)/1000.0:
 				break
 		return p
 
@@ -316,6 +315,13 @@ class PIPE:
 	@classmethod
 	def OutsideDiameter(cls, nps:str) -> float|None:		
 		return cls.PipeThickness_df[cls.PipeThickness_df['nps'].str.match(nps)]['OD'].values[0]
+
+	@classmethod
+	def Weight(cls, nps:str, sch:str = '40') -> float|None:		
+		thk = cls.Thickness(nps, sch)/1000
+		od = cls.OutsideDiameter(nps)/1000
+		id = (od - 2 * thk)
+		return np.pi/4*(od**2 - id**2)*7850		# Steel Density 7850 kg/m³
 
 	NPS:tuple = ('15 mm', '20 mm', '25 mm', '32 mm', '40 mm', '50 mm', '65 mm', '80 mm', '100 mm', '125 mm', '150 mm', '200 mm', '250 mm', '300 mm')
 	PipeThickness_df = pd.DataFrame([
