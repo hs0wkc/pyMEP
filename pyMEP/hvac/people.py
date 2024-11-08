@@ -4,6 +4,22 @@ from .. import Quantity
 
 Q_ = Quantity
 
+""" ASHRAE Standard 62.1-2022, Chapter 6, §6.16
+Table 6-1  Minimum Ventilation Rates in Breathing Zone 
+ Ventilation Rate Procedure : IP unit (cfm, f²)"""
+human_vrp_df = pd.DataFrame([
+	['Training Room'            ,7.5, 0.06],
+    ['Meeting Room'             ,7.5, 0.06],
+    ['Corridor'                 ,0	, 0.06],
+    ['Computer Room'            ,5	, 0.06],
+    ['Laboratory'               ,10	, 0.18],
+	['Loading Dock'             ,10	, 0.12],
+    ['Office'                   ,5	, 0.06],
+    ['Factory'                  ,10 , 0.18],
+    ['Warehouse bulky'          ,10 , 0.06],
+    ['Warehouse hand-carried'   ,10 , 0.06]],
+    columns=['Space Types', 'Rp', 'Ra'])
+
 """ASHRAE Fundamentals 2021, Chapter 18, §18.4
 Table 1 Representative Rates at Which Heat and Moisture Are Given Off by Human Beings in Different States of Activity
 LowV , HighV is %Sensible Heat that is radiant in any air velocity"""
